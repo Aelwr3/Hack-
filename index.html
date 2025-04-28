@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Cyber Forensic Analyzer PRO</title>
+    <title>Advanced Cyber Forensic Suite</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
@@ -25,8 +25,8 @@
             overflow-x: hidden;
         }
 
-        /* Page 1: Upload Section */
-        .upload-container {
+        /* Upload Page */
+        .upload-page {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -34,29 +34,27 @@
             flex-direction: column;
         }
 
-        .cyber-upload-box {
+        .cyber-upload {
             border: 3px dashed var(--hacker-green);
             padding: 3rem;
             text-align: center;
             width: 80%;
-            max-width: 600px;
-            background: rgba(0, 20, 0, 0.5);
+            max-width: 800px;
+            background: rgba(0, 20, 0, 0.3);
             position: relative;
             overflow: hidden;
         }
 
-        .cyber-upload-box::before {
+        .cyber-upload::before {
             content: "";
             position: absolute;
-            top: -50%;
-            left: -50%;
             width: 200%;
             height: 200%;
             background: linear-gradient(45deg, 
                 transparent, 
                 var(--hacker-green),
                 transparent);
-            animation: scan-overlay 4s linear infinite;
+            animation: scan 4s linear infinite;
         }
 
         #fileInput {
@@ -66,18 +64,14 @@
         .upload-btn {
             background: var(--hacker-green);
             color: #000;
-            padding: 15px 30px;
+            padding: 15px 40px;
             border: none;
             cursor: pointer;
-            font-weight: bold;
+            font-size: 1.2rem;
             margin: 2rem 0;
             position: relative;
             z-index: 1;
             transition: 0.3s;
-        }
-
-        .upload-btn:hover {
-            box-shadow: 0 0 20px var(--hacker-green);
         }
 
         /* Loading Screen */
@@ -88,31 +82,31 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0,0,0,0.97);
             justify-content: center;
             align-items: center;
             flex-direction: column;
         }
 
-        .radar-scan {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
+        .radar-container {
+            width: 300px;
+            height: 300px;
             position: relative;
+        }
+
+        .radar-scan {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
             background: 
                 radial-gradient(circle at 50% 50%, 
-                    transparent 60%, 
-                    var(--hacker-green) 65%);
-            animation: scan 2s linear infinite;
+                    transparent 65%, 
+                    var(--hacker-green) 70%);
+            animation: radar-spin 2s linear infinite;
         }
 
-        .decrypt-text {
-            margin-top: 2rem;
-            font-size: 1.2rem;
-        }
-
-        /* Page 2: Results Section */
-        .results-container {
+        /* Results Page */
+        .results-page {
             display: none;
             max-width: 1000px;
             margin: 2rem auto;
@@ -121,101 +115,113 @@
             background: var(--terminal-bg);
         }
 
-        .sensitive-data {
+        .data-card {
             background: #000;
-            padding: 1rem;
-            margin: 1rem 0;
-            cursor: pointer;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--hacker-green);
             position: relative;
+            cursor: pointer;
+            transition: 0.3s;
         }
 
-        .sensitive-data::after {
-            content: "CLICK TO REVEAL";
-            position: absolute;
-            right: 10px;
-            color: #666;
-            font-size: 0.8rem;
+        .hidden-data {
+            filter: blur(5px);
+            user-select: none;
         }
 
-        .revealed {
-            background: #002200;
-        }
-
-        .revealed::after {
+        .revealed-data {
             display: none;
         }
 
-        @keyframes scan {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .data-card.revealed .hidden-data {
+            display: none;
         }
 
-        @keyframes scan-overlay {
+        .data-card.revealed .revealed-data {
+            display: block;
+        }
+
+        /* Animations */
+        @keyframes scan {
             0% { transform: translate(-50%, -50%) rotate(0deg); }
             100% { transform: translate(50%, 50%) rotate(360deg); }
+        }
+
+        @keyframes radar-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Page 1: Upload -->
-    <div class="upload-container">
-        <div class="cyber-upload-box">
-            <h1>CYBER FORENSIC ANALYZER v3.0</h1>
-            <i class="fas fa-file-upload fa-3x"></i>
+    <!-- Upload Page -->
+    <div class="upload-page">
+        <div class="cyber-upload">
+            <h1>CYBER FORENSIC ANALYZER v4.0</h1>
+            <i class="fas fa-file-upload fa-4x"></i>
             <input type="file" id="fileInput" accept="image/*, video/*">
             <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
-                UPLOAD MEDIA FILE
+                SELECT MEDIA FILE
             </button>
             <p id="fileStatus">No file selected</p>
         </div>
     </div>
 
-    <!-- Loading Screen -->
+    <!-- Analyzing Screen -->
     <div class="analyzing-screen">
-        <div class="radar-scan"></div>
-        <div class="decrypt-text">DECRYPTING DATA... <span id="progress">0%</span></div>
+        <div class="radar-container">
+            <div class="radar-scan"></div>
+        </div>
+        <div class="decrypt-progress">DECRYPTING ENCRYPTED DATA... <span id="progress">0%</span></div>
     </div>
 
-    <!-- Page 2: Results -->
-    <div class="results-container">
-        <h2>FORENSIC ANALYSIS REPORT</h2>
-        
-        <!-- Device Info -->
-        <div class="sensitive-data" onclick="reveal(this)">
-            <div class="hidden">Device: █████████████</div>
-            <div class="revealed-content">Device: Infinix Hot 30i (Android 13)</div>
+    <!-- Results Page -->
+    <div class="results-page">
+        <h2>DIGITAL FORENSIC REPORT</h2>
+
+        <!-- Device Information -->
+        <div class="data-card" onclick="toggleData(this)">
+            <div class="hidden-data">████████████████████</div>
+            <div class="revealed-data">
+                <strong>Device:</strong> Infinix Hot 30i (Android 13)<br>
+                <strong>IMEI:</strong> 358756451248978
+            </div>
         </div>
 
         <!-- Phone Numbers -->
-        <div class="sensitive-data" onclick="reveal(this)">
-            <div class="hidden">Phone: ███-███████</div>
-            <div class="revealed-content">Phone: +212 691-393342</div>
-        </div>
-
-        <div class="sensitive-data" onclick="reveal(this)">
-            <div class="hidden">Phone: ███-███████</div>
-            <div class="revealed-content">Phone: +212 644-266053</div>
+        <div class="data-card" onclick="toggleData(this)">
+            <div class="hidden-data">████████████████</div>
+            <div class="revealed-data">
+                +212 691-393342<br>
+                +212 644-266053<br>
+                +212 695-894500
+            </div>
         </div>
 
         <!-- Social Media -->
-        <div class="sensitive-data" onclick="reveal(this)">
-            <div class="hidden">Instagram: ████████████</div>
-            <div class="revealed-content">Instagram: @leila_tibari21</div>
+        <div class="data-card" onclick="toggleData(this)">
+            <div class="hidden-data">██████████████████</div>
+            <div class="revealed-data">
+                <i class="fab fa-instagram"></i> @leila_tibari21<br>
+                <i class="fab fa-facebook"></i> fb.com/tibari.profile
+            </div>
         </div>
 
         <!-- Geolocation -->
         <div class="geo-map">
             <iframe
-                src="https://maps.google.com/maps?q=29.3660282,-9.5945859&z=12&output=embed"
+                src="https://maps.google.com/maps?q=29.3660282,-9.5945859&z=14&output=embed"
                 width="100%"
                 height="400"
-                style="border:0;margin-top:20px;">
+                style="border:0;margin-top:20px;"
+                allowfullscreen>
             </iframe>
         </div>
     </div>
 
     <script>
-        // File Upload Handling
+        // File Handling
         document.getElementById('fileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -226,7 +232,7 @@
 
         // Analysis Simulation
         function startAnalysis() {
-            document.querySelector('.upload-container').style.display = 'none';
+            document.querySelector('.upload-page').style.display = 'none';
             document.querySelector('.analyzing-screen').style.display = 'flex';
 
             let progress = 0;
@@ -242,15 +248,15 @@
             }, 1000);
         }
 
-        // Show Results Page
+        // Show Results
         function showResults() {
             document.querySelector('.analyzing-screen').style.display = 'none';
-            document.querySelector('.results-container').style.display = 'block';
+            document.querySelector('.results-page').style.display = 'block';
         }
 
-        // Data Revelation System
-        function reveal(element) {
-            element.classList.add('revealed');
+        // Data Toggle System
+        function toggleData(element) {
+            element.classList.toggle('revealed');
         }
     </script>
 </body>
