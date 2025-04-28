@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Advanced Cyber Forensic Suite</title>
+    <title>CYBER FORENSIC LAB</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
             --hacker-green: #00ff88;
             --dark-bg: #0a0a0a;
-            --terminal-bg: #001100;
+            --terminal-bg: #001a00;
         }
 
         * {
@@ -25,8 +25,19 @@
             overflow-x: hidden;
         }
 
-        /* Upload Page */
-        .upload-page {
+        /* Matrix Background Effect */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        /* Upload Section */
+        .upload-section {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -34,18 +45,19 @@
             flex-direction: column;
         }
 
-        .cyber-upload {
+        .cyber-upload-box {
             border: 3px dashed var(--hacker-green);
             padding: 3rem;
             text-align: center;
             width: 80%;
             max-width: 800px;
-            background: rgba(0, 20, 0, 0.3);
+            background: rgba(0, 30, 0, 0.3);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 0 50px #00ff8833;
         }
 
-        .cyber-upload::before {
+        .cyber-upload-box::before {
             content: "";
             position: absolute;
             width: 200%;
@@ -57,24 +69,7 @@
             animation: scan 4s linear infinite;
         }
 
-        #fileInput {
-            display: none;
-        }
-
-        .upload-btn {
-            background: var(--hacker-green);
-            color: #000;
-            padding: 15px 40px;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2rem;
-            margin: 2rem 0;
-            position: relative;
-            z-index: 1;
-            transition: 0.3s;
-        }
-
-        /* Loading Screen */
+        /* Analysis Simulation */
         .analyzing-screen {
             display: none;
             position: fixed;
@@ -82,31 +77,49 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.97);
-            justify-content: center;
-            align-items: center;
+            background: rgba(0,0,0,0.98);
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        .radar-container {
-            width: 300px;
-            height: 300px;
+        .hud-container {
+            width: 800px;
+            height: 500px;
+            border: 2px solid var(--hacker-green);
+            background: rgba(0, 20, 0, 0.5);
             position: relative;
+            overflow: hidden;
         }
 
         .radar-scan {
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            width: 300px;
+            height: 300px;
             border-radius: 50%;
             background: 
                 radial-gradient(circle at 50% 50%, 
                     transparent 65%, 
                     var(--hacker-green) 70%);
             animation: radar-spin 2s linear infinite;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .terminal-log {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 150px;
+            background: rgba(0,0,0,0.9);
+            padding: 1rem;
+            overflow-y: auto;
+            border-top: 2px solid var(--hacker-green);
         }
 
         /* Results Page */
-        .results-page {
+        .results-section {
             display: none;
             max-width: 1000px;
             margin: 2rem auto;
@@ -115,31 +128,21 @@
             background: var(--terminal-bg);
         }
 
-        .data-card {
+        .encrypted-data {
             background: #000;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            border-left: 4px solid var(--hacker-green);
-            position: relative;
+            padding: 1rem;
+            margin: 1rem 0;
             cursor: pointer;
-            transition: 0.3s;
+            position: relative;
+            border-left: 3px solid #004400;
         }
 
-        .hidden-data {
-            filter: blur(5px);
-            user-select: none;
-        }
-
-        .revealed-data {
-            display: none;
-        }
-
-        .data-card.revealed .hidden-data {
-            display: none;
-        }
-
-        .data-card.revealed .revealed-data {
-            display: block;
+        .encrypted-data::after {
+            content: "CLICK TO DECRYPT";
+            position: absolute;
+            right: 10px;
+            color: #008800;
+            font-size: 0.8rem;
         }
 
         /* Animations */
@@ -149,20 +152,35 @@
         }
 
         @keyframes radar-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .glitch {
+            text-shadow: 2px 2px #ff0033, -2px -2px #00ffff;
+            animation: glitch 1s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
         }
     </style>
 </head>
 <body>
-    <!-- Upload Page -->
-    <div class="upload-page">
-        <div class="cyber-upload">
-            <h1>CYBER FORENSIC ANALYZER v4.0</h1>
-            <i class="fas fa-file-upload fa-4x"></i>
-            <input type="file" id="fileInput" accept="image/*, video/*">
-            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
-                SELECT MEDIA FILE
+    <canvas class="matrix-bg" id="matrix"></canvas>
+
+    <!-- Upload Section -->
+    <div class="upload-section">
+        <div class="cyber-upload-box">
+            <h1 class="glitch">CYBER FORENSIC LAB v5.0</h1>
+            <input type="file" id="fileInput" accept="image/*, video/*" hidden>
+            <button onclick="document.getElementById('fileInput').click()" class="cyber-button">
+                <i class="fas fa-file-upload"></i> UPLOAD MEDIA
             </button>
             <p id="fileStatus">No file selected</p>
         </div>
@@ -170,29 +188,30 @@
 
     <!-- Analyzing Screen -->
     <div class="analyzing-screen">
-        <div class="radar-container">
+        <div class="hud-container">
             <div class="radar-scan"></div>
+            <div class="terminal-log" id="terminalLog"></div>
         </div>
-        <div class="decrypt-progress">DECRYPTING ENCRYPTED DATA... <span id="progress">0%</span></div>
+        <div class="decrypt-progress">INITIALIZING DEEP SCAN... <span id="progress">0%</span></div>
     </div>
 
-    <!-- Results Page -->
-    <div class="results-page">
-        <h2>DIGITAL FORENSIC REPORT</h2>
+    <!-- Results Section -->
+    <div class="results-section">
+        <h2 class="glitch">DECRYPTED INTELLIGENCE</h2>
 
-        <!-- Device Information -->
-        <div class="data-card" onclick="toggleData(this)">
-            <div class="hidden-data">████████████████████</div>
-            <div class="revealed-data">
+        <!-- Device Info -->
+        <div class="encrypted-data" onclick="revealData(this)">
+            <div class="hidden">████████████████████</div>
+            <div class="revealed">
                 <strong>Device:</strong> Infinix Hot 30i (Android 13)<br>
                 <strong>IMEI:</strong> 358756451248978
             </div>
         </div>
 
         <!-- Phone Numbers -->
-        <div class="data-card" onclick="toggleData(this)">
-            <div class="hidden-data">████████████████</div>
-            <div class="revealed-data">
+        <div class="encrypted-data" onclick="revealData(this)">
+            <div class="hidden">████████████████</div>
+            <div class="revealed">
                 +212 691-393342<br>
                 +212 644-266053<br>
                 +212 695-894500
@@ -200,9 +219,9 @@
         </div>
 
         <!-- Social Media -->
-        <div class="data-card" onclick="toggleData(this)">
-            <div class="hidden-data">██████████████████</div>
-            <div class="revealed-data">
+        <div class="encrypted-data" onclick="revealData(this)">
+            <div class="hidden">██████████████████</div>
+            <div class="revealed">
                 <i class="fab fa-instagram"></i> @leila_tibari21<br>
                 <i class="fab fa-facebook"></i> fb.com/tibari.profile
             </div>
@@ -211,36 +230,73 @@
         <!-- Geolocation -->
         <div class="geo-map">
             <iframe
-                src="https://maps.google.com/maps?q=29.3660282,-9.5945859&z=14&output=embed"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1763.755805463501!2d-9.5945859!3d29.3660282!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xdb63c2a1c7df1c1%3A0x2d4c7c2d4c7c2d4c!2sYour%20Location!5e0!3m2!1sen!2sma!4v1710500000000!5m2!1sen!2sma"
                 width="100%"
-                height="400"
-                style="border:0;margin-top:20px;"
+                height="450"
+                style="border:1px solid #00ff88;"
                 allowfullscreen>
             </iframe>
         </div>
     </div>
 
     <script>
+        // Matrix Background
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+        const drops = Array(Math.floor(canvas.width/10)).fill(0);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0F0';
+            ctx.font = '15px monospace';
+            
+            drops.forEach((drop, i) => {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * 20, drop * 20);
+                drops[i] = drop > canvas.height/20 ? 0 : drop + 1;
+            });
+        }
+        setInterval(drawMatrix, 50);
+
         // File Handling
         document.getElementById('fileInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                document.getElementById('fileStatus').textContent = file.name;
+            if (e.target.files[0]) {
+                document.getElementById('fileStatus').textContent = e.target.files[0].name;
                 startAnalysis();
             }
         });
 
         // Analysis Simulation
+        const terminalMessages = [
+            "Initializing neural network...",
+            "Bypassing firewall...",
+            "Decrypting EXIF data...",
+            "Mapping network nodes...",
+            "Extracting geolocation data...",
+            "Compiling final report..."
+        ];
+
         function startAnalysis() {
-            document.querySelector('.upload-page').style.display = 'none';
+            document.querySelector('.upload-section').style.display = 'none';
             document.querySelector('.analyzing-screen').style.display = 'flex';
 
             let progress = 0;
-            const progressElement = document.getElementById('progress');
+            let messageIndex = 0;
+            const terminal = document.getElementById('terminalLog');
+            
             const interval = setInterval(() => {
                 progress += (100 / 30);
-                progressElement.textContent = Math.floor(progress) + '%';
+                document.getElementById('progress').textContent = Math.floor(progress) + '%';
                 
+                if (messageIndex < terminalMessages.length) {
+                    terminal.innerHTML += `> ${terminalMessages[messageIndex]}<br>`;
+                    messageIndex++;
+                }
+
                 if (progress >= 100) {
                     clearInterval(interval);
                     showResults();
@@ -251,12 +307,13 @@
         // Show Results
         function showResults() {
             document.querySelector('.analyzing-screen').style.display = 'none';
-            document.querySelector('.results-page').style.display = 'block';
+            document.querySelector('.results-section').style.display = 'block';
         }
 
-        // Data Toggle System
-        function toggleData(element) {
-            element.classList.toggle('revealed');
+        // Data Revelation
+        function revealData(element) {
+            element.classList.add('revealed');
+            element.style.borderLeftColor = '#00ff88';
         }
     </script>
 </body>
