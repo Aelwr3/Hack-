@@ -1,70 +1,85 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>تقرير التحليل الأمني</title>
+    <title>Cyber Forensic Analyzer</title>
     <link rel="stylesheet" href="style.css">
-    <!-- الخطوط العربية -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- Upload Section -->
+    <div class="upload-container active">
+        <div class="scan-box">
+            <i class="fas fa-cloud-upload-alt fa-3x"></i>
+            <h1>UPLOAD MEDIA FILE</h1>
+            <input type="file" id="fileInput" accept="image/*, video/*" hidden>
+            <button onclick="document.getElementById('fileInput').click()">
+                Choose File
+            </button>
+            <p id="fileName">No file selected</p>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
     <div class="loading-screen">
-        <div class="loader"></div>
-        <p>جارٍ تحليل البيانات... 45%</p>
+        <div class="scan-animation">
+            <div class="radar"></div>
+            <p class="percentage">ANALYZING: 0%</p>
+        </div>
     </div>
 
-    <div class="container">
-        <h1>نتائج التحليل الأمني المتقدم</h1>
+    <!-- Results Section -->
+    <div class="results-container">
+        <!-- سيتم إدراج نفس محتوى النتائج السابق مع التعديلات الإنجليزية -->
+    </div>
+
+<script>
+const fileInput = document.getElementById('fileInput');
+const loadingScreen = document.querySelector('.loading-screen');
+const uploadContainer = document.querySelector('.upload-container');
+const resultsContainer = document.querySelector('.results-container');
+
+fileInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if(file) {
+        document.getElementById('fileName').textContent = file.name;
+        showPreview(file);
+        startAnalysis();
+    }
+});
+
+function showPreview(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        // سيتم إضافة معاينة الملف هنا
+    }
+    reader.readAsDataURL(file);
+}
+
+function startAnalysis() {
+    uploadContainer.classList.remove('active');
+    loadingScreen.style.display = 'flex';
+    
+    let percent = 0;
+    const interval = setInterval(() => {
+        percent += (100/30);
+        document.querySelector('.percentage').textContent = 
+            `ANALYZING: ${Math.min(100, Math.floor(percent))}%`;
         
-        <div class="media-container">
-            <img src="TIBARI.jpg" alt="الصورة المحللة">
-        </div>
+        if(percent >= 100) {
+            clearInterval(interval);
+            showResults();
+        }
+    }, 1000);
+}
 
-        <div class="info-box">
-            <h2>🛡️ المعلومات المستخرجة:</h2>
-            <div class="grid-container">
-                <div class="info-item">
-                    <span class="label">IP:</span>
-                    <span class="value">196.168.45.123</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">البلد:</span>
-                    <span class="value">المغرب</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">المدينة:</span>
-                    <span class="value">الدار البيضاء</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">الجهاز:</span>
-                    <span class="value">Samsung Galaxy S23 Ultra</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="social-box">
-            <h2>📱 الحسابات الاجتماعية:</h2>
-            <a href="#" class="social-link">facebook.com/user_x</a>
-            <a href="#" class="social-link">instagram.com/user_x</a>
-            <a href="#" class="social-link">wa.me/212612345678</a>
-        </div>
-
-        <div class="map-container">
-            <h2>📍 الموقع الجغرافي:</h2>
-            <iframe
-                width="100%"
-                height="300"
-                frameborder="0"
-                src="https://maps.google.com/maps?q=33.5731,-7.5898&z=15&output=embed">
-            </iframe>
-        </div>
-    </div>
-
-    <script>
-        // إخفاء شاشة التحميل بعد 5 ثواني
-        setTimeout(() => {
-            document.querySelector('.loading-screen').style.display = 'none';
-        }, 5000);
-    </script>
+function showResults() {
+    loadingScreen.style.display = 'none';
+    resultsContainer.style.display = 'block';
+    
+    // إضافة تأثيرات ظهور النتائج بشكل تدريجي
+    gsap.from(".info-box", {duration: 1, opacity: 0, y: 50});
+}
+</script>
 </body>
 </html>
