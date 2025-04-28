@@ -2,84 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Cyber Forensic Analyzer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Forensic Analyzer v1.0</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Upload Section -->
-    <div class="upload-container active">
-        <div class="scan-box">
-            <i class="fas fa-cloud-upload-alt fa-3x"></i>
-            <h1>UPLOAD MEDIA FILE</h1>
-            <input type="file" id="fileInput" accept="image/*, video/*" hidden>
-            <button onclick="document.getElementById('fileInput').click()">
-                Choose File
-            </button>
-            <p id="fileName">No file selected</p>
+    <!-- Section 1: Upload File -->
+    <div class="upload-section active">
+        <div class="upload-box">
+            <i class="fa-solid fa-file-arrow-up icon"></i>
+            <h1>Upload Media File</h1>
+            <input type="file" id="real-file" hidden accept="image/*, video/*">
+            <button type="button" id="custom-button">CHOOSE FILE</button>
+            <span id="file-name">No file chosen</span>
         </div>
     </div>
 
-    <!-- Loading Screen -->
-    <div class="loading-screen">
-        <div class="scan-animation">
+    <!-- Section 2: Analyzing Screen -->
+    <div class="analyzing-section">
+        <div class="scanning-animation">
             <div class="radar"></div>
-            <p class="percentage">ANALYZING: 0%</p>
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            <div class="percentage">0%</div>
         </div>
     </div>
 
-    <!-- Results Section -->
-    <div class="results-container">
-        <!-- سيتم إدراج نفس محتوى النتائج السابق مع التعديلات الإنجليزية -->
+    <!-- Section 3: Results -->
+    <div class="results-section">
+        <div class="header">
+            <h2>Forensic Analysis Report</h2>
+            <div class="timestamp">Generated at: <span id="time"></span></div>
+        </div>
+        
+        <!-- سيتم إضافة محتوى النتائج هنا -->
     </div>
 
-<script>
-const fileInput = document.getElementById('fileInput');
-const loadingScreen = document.querySelector('.loading-screen');
-const uploadContainer = document.querySelector('.upload-container');
-const resultsContainer = document.querySelector('.results-container');
-
-fileInput.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if(file) {
-        document.getElementById('fileName').textContent = file.name;
-        showPreview(file);
-        startAnalysis();
-    }
-});
-
-function showPreview(file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        // سيتم إضافة معاينة الملف هنا
-    }
-    reader.readAsDataURL(file);
-}
-
-function startAnalysis() {
-    uploadContainer.classList.remove('active');
-    loadingScreen.style.display = 'flex';
-    
-    let percent = 0;
-    const interval = setInterval(() => {
-        percent += (100/30);
-        document.querySelector('.percentage').textContent = 
-            `ANALYZING: ${Math.min(100, Math.floor(percent))}%`;
-        
-        if(percent >= 100) {
-            clearInterval(interval);
-            showResults();
-        }
-    }, 1000);
-}
-
-function showResults() {
-    loadingScreen.style.display = 'none';
-    resultsContainer.style.display = 'block';
-    
-    // إضافة تأثيرات ظهور النتائج بشكل تدريجي
-    gsap.from(".info-box", {duration: 1, opacity: 0, y: 50});
-}
-</script>
+    <script src="scripts.js"></script>
 </body>
 </html>
